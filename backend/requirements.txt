@@ -1,0 +1,19 @@
+# Pinned to known-good versions for P1. Lock file (uv / poetry) lands in
+# later tickets once the dependency footprint settles.
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.4
+
+# Database
+SQLAlchemy==2.0.36
+alembic==1.14.0
+psycopg[binary]==3.2.3
+
+# Auth
+bcrypt==4.2.1
+PyJWT==2.10.1
+
+# Tests
+pytest==8.3.4
+pytest-asyncio==0.25.0
+httpx==0.28.1

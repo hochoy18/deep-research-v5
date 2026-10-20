@@ -10,3 +10,22 @@ install-*.png
 # Local secrets (don't commit credentials)
 .env
 .env.local
+
+# Local scratch (spec drafts, tickets, prototype remnants) — see docs/agents/issue-tracker.md
+.scratch/
+
+# Backend
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/.coverage
+backend/*.db
+backend/.env
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/.turbo/
+frontend/out/
+frontend/.env*.local
+frontend/coverage/
