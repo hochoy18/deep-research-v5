@@ -14,6 +14,9 @@ install-*.png
 # Local scratch (spec drafts, tickets, prototype remnants) — see docs/agents/issue-tracker.md
 .scratch/
 
+# Vendored copies of the agent-skill docs. Installed tooling, not ours.
+docs/SDD/matt-pocock/
+
 # Backend
 backend/__pycache__/
 backend/**/__pycache__/
@@ -29,3 +32,4 @@ frontend/.turbo/
 frontend/out/
 frontend/.env*.local
 frontend/coverage/
+frontend/tsconfig.tsbuildinfo

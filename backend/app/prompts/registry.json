@@ -1,0 +1,12 @@
+{
+  "$comment": "Seed prompt registry: prompt TEXT and generation params only. Per ADR 0004 the model is NOT seeded here — it lives only in Langfuse prompt config, so a seed prompt resolves with no model and a real provider run fails visibly rather than silently using a repo-pinned model. Adding a prompt = add <prompt_id>.md + an entry here, and register it in Langfuse.",
+  "prompts": {
+    "plan_generate_system": {
+      "temperature": 0.2,
+      "max_tokens": 2048,
+      "json_mode": true,
+      "variables": ["query", "history"],
+      "optional_variables": ["history"]
+    }
+  }
+}

@@ -7,6 +7,7 @@
  *   imports it directly except through that helper.
  */
 
+import { apiUrl } from "./backend";
 import { readBearer } from "./bearer";
 
 export type ApiError = {
@@ -22,13 +23,11 @@ export class AuthApiError extends Error {
   }
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
-
 export async function signup(input: {
   username: string;
   password: string;
 }): Promise<{ token: string; user_id: string }> {
-  const res = await fetch(`${API_BASE}/auth/signup`, {
+  const res = await fetch(apiUrl("/auth/signup"), {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
@@ -41,7 +40,7 @@ export async function login(input: {
   username: string;
   password: string;
 }): Promise<{ token: string; user_id: string }> {
-  const res = await fetch(`${API_BASE}/auth/login`, {
+  const res = await fetch(apiUrl("/auth/login"), {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
@@ -53,7 +52,7 @@ export async function login(input: {
 export async function logout(): Promise<void> {
   const bearer = readBearer();
   if (!bearer) return;
-  const res = await fetch(`${API_BASE}/auth/logout`, {
+  const res = await fetch(apiUrl("/auth/logout"), {
     method: "POST",
     headers: { authorization: `Bearer ${bearer.token}` },
   });
@@ -72,7 +71,7 @@ export async function me(): Promise<{
 }> {
   const bearer = readBearer();
   if (!bearer) throw new AuthApiError(401, "no bearer");
-  const res = await fetch(`${API_BASE}/auth/me`, {
+  const res = await fetch(apiUrl("/auth/me"), {
     headers: { authorization: `Bearer ${bearer.token}` },
   });
   await ensureOk(res);

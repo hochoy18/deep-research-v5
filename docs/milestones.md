@@ -112,7 +112,7 @@ auth_token_blacklist (
 
 conversations (
   id              UUID PRIMARY KEY,
-  user_id         UUID REFERENCES users(id),
+  user_id         UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   query           TEXT NOT NULL,
   report_md       TEXT,
   created_at      TIMESTAMP NOT NULL DEFAULT now(),
@@ -121,8 +121,8 @@ conversations (
 
 messages (
   id              UUID PRIMARY KEY,
-  conversation_id UUID REFERENCES conversations(id),
-  role            TEXT,            -- 'user' | 'system' | 'event'
+  conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+  role            TEXT NOT NULL,    -- 'user' | 'system' | 'event'
   content         TEXT,
   event_type      TEXT,
   created_at      TIMESTAMP NOT NULL DEFAULT now()
@@ -130,16 +130,23 @@ messages (
 
 plans (
   id              UUID PRIMARY KEY,
-  conversation_id UUID REFERENCES conversations(id),
-  sections        JSONB,
+  conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+  sections        JSONB NOT NULL,
   plan_note       TEXT,             -- Plan-level Note (P2+); NULL/empty in P1
   version         INT NOT NULL,
-  approved        BOOLEAN,
+  approved        BOOLEAN NOT NULL DEFAULT false,
   approved_at     TIMESTAMP,
   created_at      TIMESTAMP NOT NULL DEFAULT now(),
   updated_at      TIMESTAMP NOT NULL DEFAULT now()    -- bumped on every revision
 )
 ```
+
+Issue #3 tightened four columns against this table: `messages.role`,
+`conversations.user_id`, `plans.sections` and `plans.approved` are NOT
+NULL (a Message has no meaning without a role, a Conversation has no owner
+if `user_id` is nullable, and a Plan with no sections is not a Plan), and
+the three foreign keys cascade. `app/db/models.py` and the Alembic
+migrations are the authority; this table mirrors them.
 
 ### Langfuse prompt registry (P1)
 

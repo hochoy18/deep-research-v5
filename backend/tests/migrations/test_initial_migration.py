@@ -12,43 +12,11 @@ on a fresh DB inserts one row, and a second run leaves it alone.
 
 from __future__ import annotations
 
-import os
-import tempfile
-from pathlib import Path
-
-import pytest
 from alembic import command
 from alembic.config import Config as AlembicConfig
 from sqlalchemy import create_engine, inspect, text
 
-
-BACKEND_ROOT = Path(__file__).resolve().parents[2]
-
-
-@pytest.fixture
-def sqlite_url() -> str:
-    """A file-backed SQLite URL so multiple connections (Alembic, app, tests)
-    all see the same schema. `:memory:` would not work across processes."""
-    fd, path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-    url = f"sqlite:///{path}"
-    yield url
-    try:
-        os.unlink(path)
-    except OSError:
-        pass
-
-
-@pytest.fixture
-def alembic_config(sqlite_url: str, monkeypatch: pytest.MonkeyPatch) -> AlembicConfig:
-    monkeypatch.setenv("DATABASE_URL", sqlite_url)
-    monkeypatch.setenv("JWT_SECRET", "test-secret")
-    monkeypatch.setenv("APP_ENV", "test")
-
-    cfg = AlembicConfig(str(BACKEND_ROOT / "alembic.ini"))
-    cfg.set_main_option("script_location", str(BACKEND_ROOT / "migrations"))
-    cfg.set_main_option("sqlalchemy.url", sqlite_url)
-    return cfg
+# `sqlite_url` and `alembic_config` live in this directory's conftest.
 
 
 class TestInitialMigration:
@@ -140,4 +108,4 @@ class TestInitialMigration:
         engine = create_engine(sqlite_url)
         with engine.connect() as conn:
             version = conn.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
-        assert version == "0001_initial"
+        assert version == "0002_plan_tables"

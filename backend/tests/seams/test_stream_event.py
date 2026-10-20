@@ -1,9 +1,13 @@
-"""Behavior tests for the stream_event seam (P1 stub)."""
+"""Behavior tests for the stream_event seam."""
 
 from __future__ import annotations
 
-import pytest
+import uuid
 
+import pytest
+from sqlalchemy import select
+
+from app.db.models import Message
 from app.seams.stream_event import StreamEventError, get_buffer, reset_buffer, stream_event
 
 
@@ -53,3 +57,25 @@ class TestStreamEvent:
         stream_event("plan_ready", {"session_id": "s1"})
         reset_buffer("s1")
         assert get_buffer("s1") == []
+
+
+class TestPersistence:
+    """Only a real Conversation can become a `messages` row. Buffering keys
+    off whatever the caller passes, so a synthetic id has to be delivered
+    without a dangling foreign key."""
+
+    def test_uuid_key_is_persisted(self, db_session) -> None:
+        conversation_id = uuid.uuid4()
+        stream_event("plan_ready", {"session_id": str(conversation_id)})
+
+        rows = db_session.execute(select(Message)).scalars().all()
+
+        assert [m.conversation_id for m in rows] == [conversation_id]
+        assert rows[0].role == "event"
+        assert rows[0].event_type == "plan_ready"
+
+    def test_synthetic_key_is_buffered_but_not_persisted(self, db_session) -> None:
+        stream_event("plan_ready", {"session_id": "s1"})
+
+        assert len(get_buffer("s1")) == 1
+        assert db_session.execute(select(Message)).scalars().all() == []
