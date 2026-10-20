@@ -1,0 +1,12 @@
+# Editor / IDE
+.idea/
+.vscode/
+.DS_Store
+
+# Tooling caches / local artifacts
+.playwright-mcp/
+install-*.png
+
+# Local secrets (don't commit credentials)
+.env
+.env.local
