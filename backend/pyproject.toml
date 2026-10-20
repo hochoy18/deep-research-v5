@@ -1,31 +1,64 @@
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "v5-backend"
 version = "0.1.0"
 description = "Deep Research v5 — P1 backend"
-requires-python = ">=3.11"
+# The patch is pinned: a minor bump can change `TypedDict` inference, which
+# LangGraph's graph typing is sensitive to. `.python-version` says 3.12 too;
+# this is the machine-readable half of the same decision.
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # Web
+    "fastapi==0.115.6",
+    "uvicorn[standard]==0.32.1",
+    "pydantic==2.10.4",
+    # Database. Sync driver: `app/db/session.py` uses `create_engine` +
+    # `sessionmaker`, so DATABASE_URL must say `postgresql+psycopg`, not
+    # `+asyncpg`.
+    "SQLAlchemy==2.0.36",
+    "alembic==1.14.0",
+    "psycopg[binary]==3.2.3",
+    # Auth
+    "bcrypt==4.2.1",
+    "PyJWT==2.10.1",
+    # `call_llm` seam. Runtime, not test: `app/seams/call_llm.py` is the
+    # only place an HTTP client reaches a model (ADR 0003).
+    "httpx==0.28.1",
+    # Plan graph. The checkpointer is in-memory for now (issue #9 swaps in
+    # the Postgres one without touching the graph code).
+    "langgraph==1.2.16",
+]
 
-[tool.setuptools.packages.find]
-include = ["app*"]
+[dependency-groups]
+dev = [
+    "pytest==8.3.4",
+    "ruff==0.8.4",
+    "mypy==1.14.1",
+]
+
+[tool.uv]
+# A virtual project: `app/` is run from the repo (`uvicorn app.main:app`)
+# and imported by tests via `pythonpath`, never installed as a wheel.
+# Building it would add a setuptools step and an `.egg-info` artifact for
+# nothing.
+package = false
 
 [tool.pytest.ini_options]
-# Tests live under `tests/` and walk the `app/` tree.
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-ra -q"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 strict_optional = true
 warn_unused_ignores = true
 ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "W"]

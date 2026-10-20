@@ -22,6 +22,11 @@ backend/__pycache__/
 backend/**/__pycache__/
 backend/.pytest_cache/
 backend/.coverage
+backend/.mypy_cache/
+backend/.ruff_cache/
+backend/.venv/
+backend/*.egg-info/
+backend/**/*.egg-info/
 backend/*.db
 backend/.env
 
