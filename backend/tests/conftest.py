@@ -21,7 +21,7 @@ import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app.config import Settings  # noqa: E402
-from app.db.session import dispose_engine, init_engine, session_scope  # noqa: E402
+from app.db.session import dispose_engine, get_engine, init_engine, session_scope  # noqa: E402
 from app.main import create_app  # noqa: E402
 
 
@@ -42,16 +42,11 @@ def _engine(settings: Settings) -> Iterator[None]:
     # Recreate schema for each test so tests are isolated.
     from app.db.base import Base
 
-    Base.metadata.drop_all(_engine_obj())
-    Base.metadata.create_all(_engine_obj())
+    engine = get_engine()
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
     yield
     dispose_engine()
-
-
-def _engine_obj():
-    from app.db.session import get_engine
-
-    return get_engine()
 
 
 @pytest.fixture

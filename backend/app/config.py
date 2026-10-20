@@ -41,11 +41,7 @@ def _required(name: str) -> str:
 
 
 def get_settings() -> Settings:
-    """Build the Settings dataclass from environment variables.
-
-    Test code calls the variant free `_make(**overrides)` helper instead so it
-    can avoid touching the real environment.
-    """
+    """Build the Settings dataclass from environment variables."""
     return Settings(
         database_url=_required("DATABASE_URL"),
         jwt_secret=_required("JWT_SECRET"),
@@ -53,16 +49,3 @@ def get_settings() -> Settings:
         jwt_ttl_seconds=int(os.getenv("JWT_TTL_SECONDS", "86400")),
         app_env=os.getenv("APP_ENV", "production"),
     )
-
-
-def _make(**overrides: object) -> Settings:
-    """Test helper: build a Settings dataclass with explicit overrides."""
-    defaults: dict[str, object] = {
-        "database_url": "sqlite:///:memory:",
-        "jwt_secret": "test-secret-do-not-use-in-prod",
-        "jwt_algorithm": "HS256",
-        "jwt_ttl_seconds": 86400,
-        "app_env": "test",
-    }
-    defaults.update(overrides)
-    return Settings(**defaults)  # type: ignore[arg-type]
