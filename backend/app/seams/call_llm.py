@@ -278,7 +278,7 @@ def _dashscope_completion(
         raise LLMNotConfiguredError(
             f"no model resolved for prompt {prompt.prompt_id!r} (source: "
             f"{prompt.source}). Per ADR 0004 the model comes from Langfuse "
-            "prompt config — set LANGFUSE_HOST / LANGFUSE_PUBLIC_KEY / "
+            "prompt config — set LANGFUSE_BASE_URL / LANGFUSE_PUBLIC_KEY / "
             "LANGFUSE_SECRET_KEY, or run with LLM_PROVIDER=stub."
         )
 

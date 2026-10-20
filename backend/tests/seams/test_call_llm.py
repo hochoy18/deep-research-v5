@@ -67,7 +67,7 @@ def _clean_seam(monkeypatch: pytest.MonkeyPatch) -> None:
         "LLM_PROVIDER",
         "DASHSCOPE_API_KEY",
         "DASHSCOPE_BASE_URL",
-        "LANGFUSE_HOST",
+        "LANGFUSE_BASE_URL",
         "LANGFUSE_PUBLIC_KEY",
         "LANGFUSE_SECRET_KEY",
         "PROMPT_CACHE_TTL_SECONDS",
@@ -292,7 +292,7 @@ class TestRefusal:
 class TestLangfuseRegistry:
     def _with_langfuse(self, monkeypatch: pytest.MonkeyPatch) -> None:
         as_dashscope(monkeypatch)
-        monkeypatch.setenv("LANGFUSE_HOST", "http://langfuse.internal")
+        monkeypatch.setenv("LANGFUSE_BASE_URL", "http://langfuse.internal")
         monkeypatch.setenv("LANGFUSE_PUBLIC_KEY", "pk")
         monkeypatch.setenv("LANGFUSE_SECRET_KEY", "sk-lf")
 

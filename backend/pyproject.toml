@@ -26,6 +26,10 @@ dependencies = [
     # Plan graph. The checkpointer is in-memory for now (issue #9 swaps in
     # the Postgres one without touching the graph code).
     "langgraph==1.2.16",
+    # `.env` auto-loader. ADR 0002 puts every config in the environment; this
+    # makes `uv run uvicorn app.main:app` honour `backend/.env` without
+    # callers having to remember `--env-file`.
+    "python-dotenv==1.0.1",
 ]
 
 [dependency-groups]

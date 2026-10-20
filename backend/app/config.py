@@ -48,7 +48,7 @@ def get_llm_settings() -> LLMSettings:
         provider=os.getenv("LLM_PROVIDER", "dashscope"),
         dashscope_api_key=os.getenv("DASHSCOPE_API_KEY"),
         dashscope_base_url=os.getenv("DASHSCOPE_BASE_URL", DASHSCOPE_DEFAULT_BASE_URL),
-        langfuse_host=os.getenv("LANGFUSE_HOST"),
+        langfuse_host=os.getenv("LANGFUSE_BASE_URL"),
         langfuse_public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
         langfuse_secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
         prompt_cache_ttl_seconds=int(os.getenv("PROMPT_CACHE_TTL_SECONDS", "60")),

@@ -69,8 +69,19 @@ def __getattr__(name: str):  # PEP 562 lazy module attribute
     namespace, so a module-level `app = None` must NOT be defined here:
     a real name in the namespace would shadow `__getattr__` entirely and
     `uvicorn app.main:app` would try to serve `None`.
+
+    `load_dotenv()` runs here too so a plain `uvicorn app.main:app`
+    honours `backend/.env`. Tests bypass this path (they call
+    `create_app(settings)` directly) so the dotenv loader never fires
+    in tests and cannot clobber a `monkeypatch.setenv(...)` value.
+    `override=False` is `load_dotenv`'s default: existing process env
+    always wins over `.env`, which matters for prod where the host
+    injects DATABASE_URL etc. directly.
     """
     if name == "app":
+        from dotenv import load_dotenv
+
+        load_dotenv()
         globals()["app"] = application = create_app()
         return application
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

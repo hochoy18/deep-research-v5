@@ -30,7 +30,7 @@ def real_seam(monkeypatch: pytest.MonkeyPatch) -> None:
     templating path, so `{{query}}` substitution is genuinely exercised.
     """
     monkeypatch.setenv("LLM_PROVIDER", "stub")
-    monkeypatch.delenv("LANGFUSE_HOST", raising=False)
+    monkeypatch.delenv("LANGFUSE_BASE_URL", raising=False)
     monkeypatch.delenv("LANGFUSE_PUBLIC_KEY", raising=False)
     monkeypatch.delenv("LANGFUSE_SECRET_KEY", raising=False)
     # The seam caches resolved prompts; a Langfuse lookup from an earlier
@@ -140,7 +140,7 @@ class TestWhenTheSeamCannotReachAModel:
         the answer says so instead of surfacing an anonymous traceback."""
         monkeypatch.setenv("LLM_PROVIDER", "dashscope")
         monkeypatch.setenv("DASHSCOPE_API_KEY", "not-a-real-key")
-        monkeypatch.delenv("LANGFUSE_HOST", raising=False)
+        monkeypatch.delenv("LANGFUSE_BASE_URL", raising=False)
         monkeypatch.delenv("LANGFUSE_PUBLIC_KEY", raising=False)
         monkeypatch.delenv("LANGFUSE_SECRET_KEY", raising=False)
         reset_prompt_cache()
@@ -159,7 +159,7 @@ class TestWhenTheSeamCannotReachAModel:
         """The error an operator will actually hit, asserted at the seam."""
         monkeypatch.setenv("LLM_PROVIDER", "dashscope")
         monkeypatch.setenv("DASHSCOPE_API_KEY", "not-a-real-key")
-        monkeypatch.delenv("LANGFUSE_HOST", raising=False)
+        monkeypatch.delenv("LANGFUSE_BASE_URL", raising=False)
         reset_prompt_cache()
 
         with pytest.raises(LLMNotConfiguredError) as exc:
